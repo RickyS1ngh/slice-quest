@@ -75,7 +75,7 @@ flutter:
   fonts:
     - family: Pizzaman
       fonts:
-        - asset: assets/fonts/Pizzaman
+        - asset: assets/fonts/Pizzaman.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
