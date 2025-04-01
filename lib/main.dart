@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:slice_quest/features/auth/screens/welcome_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
       title: 'Slice Quest',
+      home: WelcomeScreen(),
     );
   }
 }
