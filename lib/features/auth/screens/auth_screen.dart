@@ -183,8 +183,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               ),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 GestureDetector(
-                  onTap: () {
-                    ref
+                  onTap: () async {
+                    await ref
                         .read(authControllerProvider.notifier)
                         .signInWithGoogle(context);
                   },

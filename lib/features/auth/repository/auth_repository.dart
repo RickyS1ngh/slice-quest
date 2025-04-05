@@ -86,6 +86,10 @@ class AuthRepository {
             profileImage: userCredential.user!.photoURL ?? '',
             completedQuests: [],
             xp: 0);
+        await _firestore
+            .collection('Users')
+            .doc(userCredential.user!.uid)
+            .set(user.toMap());
       } else {
         user = await getUserData(userCredential.user!.uid).first;
       }

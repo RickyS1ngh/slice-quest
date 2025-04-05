@@ -37,7 +37,7 @@ class AuthController extends StateNotifier<bool> {
             _ref.watch(userProvider.notifier).update((state) => usermodel));
   }
 
-  void signInWithGoogle(BuildContext context) async {
+  Future<void> signInWithGoogle(BuildContext context) async {
     final user = await _authRepository.signInWithGoogle();
     user.fold(
         (l) => showSnackBar(context, l.errorMessage),
