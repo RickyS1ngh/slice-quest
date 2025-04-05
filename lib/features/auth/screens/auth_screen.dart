@@ -1,23 +1,46 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:slice_quest/features/auth/controller/auth_controller.dart';
+import 'package:slice_quest/utils.dart';
 
-class AuthScreen extends StatefulWidget {
+class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen(this.hasAccount, {super.key});
   final bool hasAccount;
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  ConsumerState<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends ConsumerState<AuthScreen> {
+  var _isAuthenticating = false;
   var _enteredEmail;
   var _enteredPassword;
   var _enteredUsername;
   final _formKey = GlobalKey<FormState>();
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      try {
+        setState(() {
+          _isAuthenticating = true;
+        });
+
+        if (widget.hasAccount) {
+          await ref
+              .read(authControllerProvider.notifier)
+              .signInWithEmail(context, _enteredEmail, _enteredPassword);
+        } else {
+          await ref.read(authControllerProvider.notifier).signUpWithEmail(
+              context, _enteredEmail, _enteredPassword, _enteredUsername);
+        }
+      } catch (errorMessage) {
+        showSnackBar(context, errorMessage.toString());
+        setState(() {
+          _isAuthenticating = false;
+        });
+      }
     }
   }
 
@@ -129,10 +152,14 @@ class _AuthScreenState extends State<AuthScreen> {
                         width: 300,
                         child: ElevatedButton(
                           onPressed: _submit,
-                          child: Text(
-                              widget.hasAccount ? 'Login' : 'Create an account',
-                              style: const TextStyle(
-                                  fontFamily: 'Pizzaman', fontSize: 20)),
+                          child: _isAuthenticating
+                              ? const CircularProgressIndicator()
+                              : Text(
+                                  widget.hasAccount
+                                      ? 'Login'
+                                      : 'Create an account',
+                                  style: const TextStyle(
+                                      fontFamily: 'Pizzaman', fontSize: 20)),
                         ),
                       )
                     ],
@@ -156,7 +183,11 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    ref
+                        .read(authControllerProvider.notifier)
+                        .signInWithGoogle(context);
+                  },
                   child: const CircleAvatar(
                     radius: 20,
                     backgroundImage: AssetImage(
