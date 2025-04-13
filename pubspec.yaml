@@ -60,6 +60,8 @@ flutter:
     - assets/images/pizza.png
     - assets/images/google_logo.jpg
     - assets/images/apple_logo.png
+    - assets/images/scroll_icon.png
+
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

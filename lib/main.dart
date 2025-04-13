@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:slice_quest/features/auth/screens/welcome_screen.dart';
+import 'package:slice_quest/features/quests/screens/all_quests_screen.dart';
+import 'package:slice_quest/features/quests/screens/tab_screen.dart';
 import 'package:slice_quest/firebase_options.dart';
 import 'package:slice_quest/providers/firebase_providers.dart';
 
@@ -11,7 +13,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    ProviderScope(
+    const ProviderScope(
       child: MyApp(),
     ),
   );
@@ -27,15 +29,12 @@ class MyApp extends ConsumerWidget {
         theme: ThemeData.dark(),
         title: 'Slice Quest',
         home: StreamBuilder(
-            stream: ref.read(authProvider).authStateChanges(),
+            stream: ref.watch(authProvider).authStateChanges(),
             builder: (ctx, snapshot) {
               if (snapshot.hasData) {
-                return Scaffold(
-                    body: Center(
-                  child: Text('Logged in'),
-                ));
+                return const TabScreen();
               }
-              return WelcomeScreen();
+              return const WelcomeScreen();
             }));
   }
 }
