@@ -13,10 +13,10 @@ class AuthScreen extends ConsumerStatefulWidget {
 }
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
-  var _isAuthenticating = false;
-  var _enteredEmail;
-  var _enteredPassword;
-  var _enteredUsername;
+  bool _isAuthenticating = false;
+  String? _enteredEmail;
+  String? _enteredPassword;
+  String? _enteredUsername;
   final _formKey = GlobalKey<FormState>();
 
   void _submit() async {
@@ -30,13 +30,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         if (widget.hasAccount) {
           await ref
               .read(authControllerProvider.notifier)
-              .signInWithEmail(context, _enteredEmail, _enteredPassword);
+              .signInWithEmail(context, _enteredEmail!, _enteredPassword!);
         } else {
           await ref.read(authControllerProvider.notifier).signUpWithEmail(
-              context, _enteredEmail, _enteredPassword, _enteredUsername);
+              context, _enteredEmail!, _enteredPassword!, _enteredUsername!);
         }
+        Navigator.of(context).popUntil((route) => route.isFirst);
       } catch (errorMessage) {
         showSnackBar(context, errorMessage.toString());
+      } finally {
         setState(() {
           _isAuthenticating = false;
         });
