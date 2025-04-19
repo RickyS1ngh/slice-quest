@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:slice_quest/features/auth/controller/auth_controller.dart';
 
 import 'package:slice_quest/features/quests/controller/quest_controller.dart';
+import 'package:slice_quest/features/quests/screens/quest_detail_screen.dart';
 import 'package:slice_quest/models/quest.dart';
 
 class AllQuestsScreen extends ConsumerStatefulWidget {
@@ -17,25 +18,20 @@ class _AllQuestsScreenState extends ConsumerState<AllQuestsScreen> {
   Widget build(BuildContext context) {
     String? activeQuest = ref.watch(currentUserProvider)?.activeQuest ?? '';
 
-    List<QuestModel> questData2 = ref.read(questDataProvider);
-    List<QuestModel> questData1 = activeQuest == ''
-        ? questData2
-        : questData2.where((quest) => quest.uuid != activeQuest).toList();
+    List<QuestModel> originalQuestData = ref.read(questDataProvider);
+    List<QuestModel> questData = activeQuest == ''
+        ? originalQuestData
+        : originalQuestData
+            .where((quest) => quest.uuid != activeQuest)
+            .toList();
     List<QuestModel> title = activeQuest == ''
         ? []
-        : questData2.where((quest) => quest.uuid == activeQuest).toList();
+        : originalQuestData
+            .where((quest) => quest.uuid == activeQuest)
+            .toList();
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Image.asset('assets/images/pizza.png'),
-        title: const Text(
-          'Slice Quest',
-          style: TextStyle(
-            fontFamily: 'Pizzaman',
-          ),
-        ),
-      ),
-      body: questData2.isEmpty
+      body: originalQuestData.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : Container(
               margin: const EdgeInsets.only(
@@ -70,28 +66,39 @@ class _AllQuestsScreenState extends ConsumerState<AllQuestsScreen> {
                         });
                       },
                       key: UniqueKey(),
-                      child: Container(
-                        alignment: Alignment.topLeft,
-                        decoration: BoxDecoration(
-                            color: ThemeData().colorScheme.primary,
-                            borderRadius: BorderRadius.circular(16)),
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              title[0].name,
-                              style: const TextStyle(
-                                  fontFamily: 'Pizzaman', fontSize: 15),
-                            ),
-                            const ImageIcon(
-                              AssetImage(
-                                'assets/images/pizza_active_icon.png',
+                      child: GestureDetector(
+                        onTap: () {
+                          List<QuestModel> quest = originalQuestData
+                              .where((quest) => quest.uuid == activeQuest)
+                              .toList();
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (ctx) {
+                            return QuestDetailScreen(quest[0]);
+                          }));
+                        },
+                        child: Container(
+                          alignment: Alignment.topLeft,
+                          decoration: BoxDecoration(
+                              color: ThemeData().colorScheme.primary,
+                              borderRadius: BorderRadius.circular(16)),
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                title[0].name,
+                                style: const TextStyle(
+                                    fontFamily: 'Pizzaman', fontSize: 15),
                               ),
-                              size: 30,
-                            )
-                          ],
+                              const ImageIcon(
+                                AssetImage(
+                                  'assets/images/pizza_active_icon.png',
+                                ),
+                                size: 30,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -114,7 +121,7 @@ class _AllQuestsScreenState extends ConsumerState<AllQuestsScreen> {
                   ),
                   Expanded(
                     child: ListView.separated(
-                      itemCount: questData1.length,
+                      itemCount: questData.length,
                       separatorBuilder: (ctx, index) => const SizedBox(
                         height: 10,
                       ),
@@ -122,41 +129,50 @@ class _AllQuestsScreenState extends ConsumerState<AllQuestsScreen> {
                         direction: DismissDirection.startToEnd,
                         onDismissed: (direction) {
                           setState(() {
-                            activeQuest = questData1[index].uuid;
+                            activeQuest = questData[index].uuid;
 
                             ref
                                 .read(questControllerProvider.notifier)
-                                .addActiveQuest(context, questData1[index].uuid,
+                                .addActiveQuest(context, questData[index].uuid,
                                     ref.read(currentUserProvider)!.uid);
                           });
                         },
                         key: UniqueKey(),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: ThemeData().colorScheme.primary,
-                              borderRadius: BorderRadius.circular(16)),
-                          padding: const EdgeInsets.all(20),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                questData1[index].name,
-                                style: const TextStyle(
-                                    fontFamily: 'Pizzaman', fontSize: 15),
-                              ),
-                              Text(
-                                'XP ${questData1[index].xp.toString()}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 13),
-                                textAlign: TextAlign.end,
-                              )
-                            ],
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (ctx) {
+                              return QuestDetailScreen(questData[index]);
+                            }));
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: ThemeData().colorScheme.primary,
+                                borderRadius: BorderRadius.circular(16)),
+                            padding: const EdgeInsets.all(20),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  questData[index].name,
+                                  style: const TextStyle(
+                                      fontFamily: 'Pizzaman', fontSize: 15),
+                                ),
+                                Text(
+                                  'XP ${questData[index].xp.toString()}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13),
+                                  textAlign: TextAlign.end,
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
