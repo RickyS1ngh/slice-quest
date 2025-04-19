@@ -4,21 +4,25 @@ import 'dart:convert';
 import 'package:uuid/uuid.dart';
 
 class QuestModel {
-  QuestModel(
-      {required this.name,
-      required this.description,
-      required this.pizzeriaName,
-      required this.location,
-      required this.image,
-      required this.xp,
-      String? uuid})
-      : uuid = uuid ?? const Uuid().v4();
+  QuestModel({
+    String? uuid,
+    required this.name,
+    required this.description,
+    required this.pizzeriaName,
+    required this.location,
+    required this.imageName,
+    required this.latitude,
+    required this.longitude,
+    required this.xp,
+  }) : uuid = uuid ?? const Uuid().v4();
   final String name;
   final String description;
   final String pizzeriaName;
   final String location;
   final String uuid;
-  final String image;
+  final String imageName;
+  final double latitude;
+  final double longitude;
   final int xp;
 
   QuestModel copyWith({
@@ -27,7 +31,9 @@ class QuestModel {
     String? pizzeriaName,
     String? location,
     String? uuid,
-    String? image,
+    String? imageName,
+    double? latitude,
+    double? longitude,
     int? xp,
   }) {
     return QuestModel(
@@ -36,7 +42,9 @@ class QuestModel {
       pizzeriaName: pizzeriaName ?? this.pizzeriaName,
       location: location ?? this.location,
       uuid: uuid ?? this.uuid,
-      image: image ?? this.image,
+      imageName: imageName ?? this.imageName,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       xp: xp ?? this.xp,
     );
   }
@@ -48,7 +56,9 @@ class QuestModel {
       'pizzeriaName': pizzeriaName,
       'location': location,
       'uuid': uuid,
-      'image': image,
+      'imageName': imageName,
+      'latitude': latitude,
+      'longitude': longitude,
       'xp': xp,
     };
   }
@@ -60,7 +70,9 @@ class QuestModel {
       pizzeriaName: map['pizzeriaName'] as String,
       location: map['location'] as String,
       uuid: map['uuid'] as String,
-      image: map['image'] as String,
+      imageName: map['imageName'] as String,
+      latitude: map['latitude'] as double,
+      longitude: map['longitude'] as double,
       xp: map['xp'] as int,
     );
   }
@@ -72,7 +84,7 @@ class QuestModel {
 
   @override
   String toString() {
-    return 'QuestModel(name: $name, description: $description, pizzeriaName: $pizzeriaName, location: $location, uuid: $uuid, image: $image, xp: $xp)';
+    return 'QuestModel(name: $name, description: $description, pizzeriaName: $pizzeriaName, location: $location, uuid: $uuid, imageName: $imageName, latitude: $latitude, longitude: $longitude, xp: $xp)';
   }
 
   @override
@@ -84,7 +96,9 @@ class QuestModel {
         other.pizzeriaName == pizzeriaName &&
         other.location == location &&
         other.uuid == uuid &&
-        other.image == image &&
+        other.imageName == imageName &&
+        other.latitude == latitude &&
+        other.longitude == longitude &&
         other.xp == xp;
   }
 
@@ -95,7 +109,9 @@ class QuestModel {
         pizzeriaName.hashCode ^
         location.hashCode ^
         uuid.hashCode ^
-        image.hashCode ^
+        imageName.hashCode ^
+        latitude.hashCode ^
+        longitude.hashCode ^
         xp.hashCode;
   }
 }

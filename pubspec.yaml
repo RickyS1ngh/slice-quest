@@ -38,6 +38,7 @@ dependencies:
     sdk: flutter
   flutter_riverpod: ^2.6.1
   fpdart: ^1.1.1
+  google_maps_flutter: ^2.10.1
   google_sign_in: ^6.2.2
   uuid: ^4.5.1
 
@@ -62,6 +63,14 @@ flutter:
     - assets/images/apple_logo.png
     - assets/images/scroll_icon.png
     - assets/images/pizza_active_icon.png
+    - assets/images/pizza_add_icon.png
+    - assets/images/Lost_City_of_Pizza.png
+    - assets/images/The_Spectacular_Slice.png
+    - assets/images/Slice_of_the_Fordham Sorcerer.png
+    - assets/images/Late_Night_Pizza.png
+    - assets/images/Epic_Pizza_Party.png
+    - assets/images/pizza_complete_icon.png
+    - assets/images/pizza_user_avatar.png
 
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
