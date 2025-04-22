@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:slice_quest/features/quests/screens/finish_quest_screen.dart';
+import 'package:slice_quest/features/quests/screens/quest_completion_screen.dart';
 import 'package:slice_quest/models/quest.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -20,7 +20,7 @@ class _QuestDetailScreenState extends State<QuestDetailScreen> {
           GestureDetector(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                return FinishQuestScreen(widget.quest);
+                return CompleteQuestScreen(widget.quest);
               }));
             },
             child: SizedBox(

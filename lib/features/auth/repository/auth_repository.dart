@@ -34,11 +34,14 @@ class AuthRepository {
       final userCredential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       UserModel user = UserModel(
+          email: email,
           username: username,
           uid: userCredential.user!.uid,
-          profileImage: '',
+          profileImage: 'pizza_user_avatar',
           completedQuests: [],
-          xp: 0);
+          xp: 0,
+          activeQuest: '',
+          reviews: []);
       await _firestore
           .collection('Users')
           .doc(userCredential.user!.uid)
@@ -81,11 +84,14 @@ class AuthRepository {
 
       if (userCredential.additionalUserInfo!.isNewUser) {
         user = UserModel(
+            email: userCredential.user!.email ?? '',
             username: userCredential.user!.displayName ?? '',
             uid: userCredential.user!.uid,
-            profileImage: userCredential.user!.photoURL ?? '',
+            profileImage: userCredential.user!.photoURL ?? 'pizza_user_avatar',
             completedQuests: [],
-            xp: 0);
+            xp: 0,
+            activeQuest: '',
+            reviews: []);
         await _firestore
             .collection('Users')
             .doc(userCredential.user!.uid)
@@ -111,6 +117,18 @@ class AuthRepository {
         .map((item) => UserModel.fromMap(item.data() as Map<String, dynamic>));
 
     return user;
+  }
+
+  Future<UserModel> getUserDataViaEmail(String email) async {
+    final userStream = _firestore
+        .collection('Users')
+        .where('email', isEqualTo: email)
+        .snapshots()
+        .map((item) => UserModel.fromDoc((item.docs.first)));
+
+    final usermodel = await userStream.first;
+
+    return usermodel;
   }
 
   Future<bool> isUsername(String name) async {

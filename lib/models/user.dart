@@ -13,15 +13,16 @@ class UserModel {
   final List<String> completedQuests;
   final int xp;
   final String activeQuest;
-  UserModel({
-    required this.email,
-    required this.username,
-    required this.uid,
-    required this.profileImage,
-    required this.completedQuests,
-    required this.xp,
-    required this.activeQuest,
-  });
+  final List<String> reviews;
+  UserModel(
+      {required this.email,
+      required this.username,
+      required this.uid,
+      required this.profileImage,
+      required this.completedQuests,
+      required this.xp,
+      required this.activeQuest,
+      required this.reviews});
 
   UserModel copyWith({
     String? email,
@@ -31,16 +32,17 @@ class UserModel {
     List<String>? completedQuests,
     int? xp,
     String? activeQuest,
+    List<String>? reviews,
   }) {
     return UserModel(
-      email: email ?? this.email,
-      username: username ?? this.username,
-      uid: uid ?? this.uid,
-      profileImage: profileImage ?? this.profileImage,
-      completedQuests: completedQuests ?? this.completedQuests,
-      xp: xp ?? this.xp,
-      activeQuest: activeQuest ?? this.activeQuest,
-    );
+        email: email ?? this.email,
+        username: username ?? this.username,
+        uid: uid ?? this.uid,
+        profileImage: profileImage ?? this.profileImage,
+        completedQuests: completedQuests ?? this.completedQuests,
+        xp: xp ?? this.xp,
+        activeQuest: activeQuest ?? this.activeQuest,
+        reviews: reviews ?? this.reviews);
   }
 
   Map<String, dynamic> toMap() {
@@ -52,22 +54,28 @@ class UserModel {
       'completedQuests': completedQuests,
       'xp': xp,
       'activeQuest': activeQuest,
+      'reviews': reviews
     };
   }
 
   factory UserModel.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data();
     return UserModel(
-        email: data!['email'],
-        username: data['username'],
-        uid: doc.id,
-        profileImage: data['profileImage'],
-        completedQuests: (data['completedQuests'] as List<dynamic>?)
-                ?.map((e) => e.toString())
-                .toList() ??
-            [],
-        xp: data['xp'],
-        activeQuest: data['activeQuest'] ?? null);
+      email: data!['email'],
+      username: data['username'],
+      uid: doc.id,
+      profileImage: data['profileImage'],
+      completedQuests: (data['completedQuests'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      xp: data['xp'],
+      activeQuest: data['activeQuest'] ?? null,
+      reviews: (data['reviews'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+    );
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -79,6 +87,7 @@ class UserModel {
       completedQuests: List.from(map['completedQuests'] as List),
       xp: map['xp'] as int,
       activeQuest: map['activeQuest'] as String,
+      reviews: List.from(map['reviews'] as List),
     );
   }
 
@@ -89,7 +98,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(email: $email, username: $username, uid: $uid, profileImage: $profileImage, completedQuests: $completedQuests, xp: $xp, activeQuest: $activeQuest)';
+    return 'UserModel(email: $email, username: $username, uid: $uid, profileImage: $profileImage, completedQuests: $completedQuests, xp: $xp, activeQuest: $activeQuest, reviews: $reviews)';
   }
 
   @override
@@ -102,7 +111,8 @@ class UserModel {
         other.profileImage == profileImage &&
         listEquals(other.completedQuests, completedQuests) &&
         other.xp == xp &&
-        other.activeQuest == activeQuest;
+        other.activeQuest == activeQuest &&
+        listEquals(other.reviews, reviews);
   }
 
   @override
@@ -113,6 +123,7 @@ class UserModel {
         profileImage.hashCode ^
         completedQuests.hashCode ^
         xp.hashCode ^
-        activeQuest.hashCode;
+        activeQuest.hashCode ^
+        reviews.hashCode;
   }
 }

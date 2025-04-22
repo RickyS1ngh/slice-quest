@@ -36,10 +36,12 @@ dependencies:
   firebase_storage: ^12.4.5
   flutter:
     sdk: flutter
+  flutter_rating: ^2.0.2
   flutter_riverpod: ^2.6.1
   fpdart: ^1.1.1
   google_maps_flutter: ^2.10.1
   google_sign_in: ^6.2.2
+  image_picker: ^1.1.2
   uuid: ^4.5.1
 
 dev_dependencies:
@@ -71,6 +73,7 @@ flutter:
     - assets/images/Epic_Pizza_Party.png
     - assets/images/pizza_complete_icon.png
     - assets/images/pizza_user_avatar.png
+    - assets/images/pizza_camera_icon.png
 
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see

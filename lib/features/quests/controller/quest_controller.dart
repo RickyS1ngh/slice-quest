@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:slice_quest/features/auth/controller/auth_controller.dart';
 import 'package:slice_quest/features/quests/repository/quest_repository.dart';
@@ -11,7 +13,7 @@ final questDataProvider = StateProvider<List<QuestModel>>((ref) {
 final questControllerProvider =
     StateNotifierProvider<QuestController, bool>((ref) {
   return QuestController(
-      questRepository: ref.watch(questRepositoryProvider), ref: ref);
+      questRepository: ref.read(questRepositoryProvider), ref: ref);
 });
 
 class QuestController extends StateNotifier<bool> {
@@ -40,5 +42,19 @@ class QuestController extends StateNotifier<bool> {
     final user = await _questRepository.removeActiveQuest(userID);
     user.fold((l) => showSnackBar(context, l.errorMessage),
         ((user) => _ref.read(currentUserProvider.notifier).state = user));
+  }
+
+  Future<void> completeQuest(
+      BuildContext context,
+      String userID,
+      QuestModel quest,
+      File image,
+      String username,
+      String comment,
+      double rating) async {
+    final user = await _questRepository.completeQuest(
+        userID, quest, image, username, comment, rating);
+    user.fold((l) => showSnackBar(context, l.errorMessage),
+        (user) => _ref.read(currentUserProvider.notifier).state = user);
   }
 }
