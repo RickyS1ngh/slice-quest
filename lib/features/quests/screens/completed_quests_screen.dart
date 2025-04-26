@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:slice_quest/data/quest_data.dart';
 import 'package:slice_quest/features/auth/controller/auth_controller.dart';
+import 'package:slice_quest/features/quests/controller/quest_controller.dart';
+import 'package:slice_quest/models/quest.dart';
 
 class CompletedQuestsScreen extends ConsumerStatefulWidget {
   const CompletedQuestsScreen({super.key});
@@ -14,42 +16,51 @@ class CompletedQuestsScreen extends ConsumerStatefulWidget {
 class _CompletedQuestsScreenState extends ConsumerState<CompletedQuestsScreen> {
   @override
   Widget build(BuildContext context) {
-    // final List<String> completedQuests =
-    //     ref.watch(currentUserProvider)!.completedQuests;
+    final List<QuestModel> completedQuests = [];
+    final List<QuestModel> questData = ref.read(questDataProvider);
+    final List<String> userCompletedQuests =
+        ref.watch(currentUserProvider)?.completedQuests ?? [];
 
+    if (userCompletedQuests != []) {
+      for (int i = 0; i < questData.length; i++) {
+        for (int j = 0; j < userCompletedQuests.length; j++) {
+          if (questData[i].uuid == userCompletedQuests[j]) {
+            completedQuests.add(questData[i]);
+          }
+        }
+      }
+    }
     return Scaffold(
-      appBar: AppBar(
-        leading: Image.asset('assets/images/pizza.png'),
-        title: const Text(
-          'Slice Quest',
-          style: TextStyle(
-            fontFamily: 'Pizzaman',
-          ),
-        ),
-      ),
       body: Center(
-        child: ref.read(currentUserProvider)!.completedQuests.isEmpty
+        child: userCompletedQuests.isEmpty
             ? const Text('There are no completed quests.')
             : Center(
-                child: ListView.separated(
-                    separatorBuilder: (ctx, index) {
-                      return const SizedBox(
-                        height: 10,
-                      );
-                    },
-                    itemCount:
-                        ref.read(currentUserProvider)!.completedQuests.length,
-                    itemBuilder: (ctx, index) {
-                      String? questName;
-                      String completedQuestID =
-                          ref.read(currentUserProvider)!.completedQuests[0];
-
-                      for (int i = 0; i < questData.length; i++) {
-                        if (questData[i].uuid == completedQuestID) {
-                          questName = questData[i].name;
-                        }
-                      }
-                      return Container(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      alignment: Alignment.topLeft,
+                      child: const Text(
+                        '  Completed Quests',
+                        style: TextStyle(fontFamily: 'Pizzaman', fontSize: 18),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Expanded(
+                        child: ListView.separated(
+                      separatorBuilder: (ctx, index) {
+                        return const SizedBox(
+                          height: 10,
+                        );
+                      },
+                      itemCount: completedQuests.length,
+                      itemBuilder: (ctx, index) {
+                        return Container(
+                          margin: const EdgeInsets.only(left: 8, right: 8),
                           alignment: Alignment.topLeft,
                           decoration: BoxDecoration(
                             color: ThemeData().colorScheme.primary,
@@ -57,15 +68,20 @@ class _CompletedQuestsScreenState extends ConsumerState<CompletedQuestsScreen> {
                           ),
                           padding: const EdgeInsets.all(20),
                           child: Row(
-                            mainAxisSize: MainAxisSize.max,
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('34',
+                              Text(completedQuests[index].name,
                                   style: const TextStyle(
-                                      fontFamily: 'Pizzaman', fontSize: 15))
+                                      fontFamily: 'Pizzaman', fontSize: 15)),
                             ],
-                          ));
-                    })),
+                          ),
+                        );
+                      },
+                    )),
+                  ],
+                ),
+              ),
       ),
     );
   }
