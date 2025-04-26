@@ -1,50 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating/flutter_rating.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:slice_quest/features/auth/controller/auth_controller.dart';
+import 'package:slice_quest/features/quests/controller/quest_controller.dart';
 import 'package:slice_quest/features/quests/screens/quest_completion_screen.dart';
 import 'package:slice_quest/models/quest.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:slice_quest/models/review.dart';
 
-class QuestDetailScreen extends StatefulWidget {
+class QuestDetailScreen extends ConsumerStatefulWidget {
   const QuestDetailScreen(this.quest, {super.key});
   final QuestModel quest;
 
   @override
-  State<QuestDetailScreen> createState() => _QuestDetailScreenState();
+  ConsumerState<QuestDetailScreen> createState() => _QuestDetailScreenState();
 }
 
-class _QuestDetailScreenState extends State<QuestDetailScreen> {
+class _QuestDetailScreenState extends ConsumerState<QuestDetailScreen> {
   @override
   Widget build(BuildContext context) {
+    List<String> completedQuests =
+        ref.read(currentUserProvider)?.completedQuests ?? [];
+
+    List<ReviewModel> questCompleted = [];
+
+    if (completedQuests.contains(widget.quest.uuid)) {
+      ref
+          .read(questControllerProvider.notifier)
+          .getReview(context, widget.quest.uuid);
+      questCompleted = ref.read(reviewProvider);
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                return CompleteQuestScreen(widget.quest);
-              }));
-            },
-            child: SizedBox(
-              width: 60,
-              child: Image.asset('assets/images/pizza_add_icon.png',
-                  height: 45, color: Colors.white),
+        appBar: AppBar(
+          actions: [
+            if (!completedQuests.contains(widget.quest.uuid))
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                    return CompleteQuestScreen(widget.quest);
+                  }));
+                },
+                child: SizedBox(
+                  width: 60,
+                  child: Image.asset('assets/images/pizza_add_icon.png',
+                      height: 45, color: Colors.white),
+                ),
+              )
+          ],
+          title: const Text(
+            'Slice Quest',
+            style: TextStyle(
+              fontFamily: 'Pizzaman',
             ),
-          )
-        ],
-        title: const Text(
-          'Slice Quest',
-          style: TextStyle(
-            fontFamily: 'Pizzaman',
           ),
         ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
+        body: Center(
+            child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
                 color: Colors.black,
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
                       'assets/images/${widget.quest.imageName}.png',
@@ -67,7 +85,7 @@ class _QuestDetailScreenState extends State<QuestDetailScreen> {
                     ),
                     Text(
                       widget.quest.description,
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(
@@ -131,12 +149,12 @@ class _QuestDetailScreenState extends State<QuestDetailScreen> {
                       height: 10,
                     ),
                     Container(
-                        width: 500,
-                        height: 500,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(width: 2)),
+                        height: 300,
                         child: GoogleMap(
+                            gestureRecognizers: {},
+                            myLocationButtonEnabled: false,
+                            myLocationEnabled: false,
+                            mapType: MapType.normal,
                             scrollGesturesEnabled: false,
                             zoomControlsEnabled: true,
                             initialCameraPosition: CameraPosition(
@@ -152,14 +170,82 @@ class _QuestDetailScreenState extends State<QuestDetailScreen> {
                                   markerId: MarkerId(widget.quest.pizzeriaName),
                                   position: LatLng(widget.quest.latitude,
                                       widget.quest.longitude)),
-                            }))
+                            })),
+                    if (questCompleted.isNotEmpty) ...[
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        'Quest Completed',
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontFamily: 'Pizzaman',
+                            fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      SingleChildScrollView(
+                        child: Expanded(
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: questCompleted.length,
+                            itemBuilder: (contex, index) {
+                              return Container(
+                                  alignment: Alignment.topLeft,
+                                  decoration: BoxDecoration(
+                                      color: ThemeData().colorScheme.primary,
+                                      borderRadius: BorderRadius.circular(16)),
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(questCompleted[index].username,
+                                                style: const TextStyle(
+                                                    fontFamily: 'Pizzaman',
+                                                    fontSize: 15)),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            StarRating(
+                                              rating:
+                                                  questCompleted[index].rating,
+                                              filledIcon: Icons.local_pizza,
+                                            ),
+                                          ]),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                          alignment: Alignment.topLeft,
+                                          child: Text(
+                                              questCompleted[index].comment)),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Image.network(
+                                        questCompleted[index].image,
+                                        height: 100,
+                                      ),
+                                    ],
+                                  ));
+                            },
+                            separatorBuilder: (context, index) {
+                              return const SizedBox(height: 10);
+                            },
+                          ),
+                        ),
+                      ),
+                    ]
                   ],
                 ),
-              ),
+              )
             ],
           ),
-        ),
-      ),
-    );
+        )));
   }
 }

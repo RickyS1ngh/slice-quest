@@ -1,15 +1,20 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:slice_quest/features/auth/controller/auth_controller.dart';
 import 'package:slice_quest/features/quests/repository/quest_repository.dart';
 import 'package:slice_quest/models/quest.dart';
+import 'package:slice_quest/models/review.dart';
 import 'package:slice_quest/utils.dart';
 import 'package:flutter/material.dart';
 
 final questDataProvider = StateProvider<List<QuestModel>>((ref) {
   return [];
 });
+
+final reviewProvider = StateProvider<List<ReviewModel>>((ref) => []);
+
 final questControllerProvider =
     StateNotifierProvider<QuestController, bool>((ref) {
   return QuestController(
@@ -56,5 +61,12 @@ class QuestController extends StateNotifier<bool> {
         userID, quest, image, username, comment, rating);
     user.fold((l) => showSnackBar(context, l.errorMessage),
         (user) => _ref.read(currentUserProvider.notifier).state = user);
+  }
+
+  Future<void> getReview(BuildContext context, String questID) async {
+    final reviews = await _questRepository.getReview(questID);
+    reviews.fold((l) => showSnackBar(context, l.errorMessage),
+        (reviews) => _ref.read(reviewProvider.notifier).state = reviews);
+    print('_______________________$reviews---------------------------------');
   }
 }

@@ -1,8 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
 class ReviewModel {
@@ -48,6 +47,17 @@ class ReviewModel {
       'username': username,
       'questID': questID,
     };
+  }
+
+  factory ReviewModel.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data();
+
+    return ReviewModel(
+        image: data!['image'],
+        rating: data['rating'],
+        comment: data['comment'],
+        username: data['username'],
+        questID: data['questID']);
   }
 
   factory ReviewModel.fromMap(Map<String, dynamic> map) {

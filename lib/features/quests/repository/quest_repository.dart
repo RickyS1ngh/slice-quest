@@ -131,10 +131,18 @@ class QuestRepository {
       await _firestore.collection('Users').doc(user.uid).update({
         "reviews": FieldValue.arrayUnion(["${review.uuid}"])
       });
+
       await _firestore
           .collection('Users')
           .doc(userID)
           .update({'xp': user.xp + quest.xp});
+
+      if (quest.uuid == user.activeQuest) {
+        await _firestore
+            .collection('Users')
+            .doc(user.uid)
+            .update({'activeQuest': ''});
+      }
       user.completedQuests.add(quest.uuid);
       user.reviews.add(review.uuid);
 
@@ -151,6 +159,27 @@ class QuestRepository {
       throw error.message!;
     } catch (error) {
       return left(ErrorHandle(error.toString()));
+    }
+  }
+
+  EitherReview<List<ReviewModel>> getReview(String questID) async {
+    try {
+      List<ReviewModel> reviews = [];
+
+      _firestore
+          .collection('Review')
+          .where('questID', isEqualTo: questID)
+          .get()
+          .then((querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          reviews.add(ReviewModel.fromMap(docSnapshot.data()));
+        }
+      });
+      return right(reviews);
+    } on FirebaseException catch (error) {
+      throw error.message!;
+    } catch (errormessage) {
+      return left(ErrorHandle(errormessage.toString()));
     }
   }
 }

@@ -69,6 +69,8 @@ class _CompleteQuestScreenState extends ConsumerState<CompleteQuestScreen> {
             userID, widget.quest, _selectedimage!, username, _review!, _rating);
 
         Navigator.of(context).popUntil((route) => route.isFirst);
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Quest has been completed')));
       } catch (error) {
         showSnackBar(context, error.toString());
       } finally {
