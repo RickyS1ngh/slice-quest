@@ -25,11 +25,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       if (image == null) {
         return;
       }
-      await ref.read(profileControllerProvider.notifier).uploadProfileImage(
-          context, _profileImage!, ref.read(currentUserProvider)!.uid);
       setState(() {
         _profileImage = File(image.path);
       });
+      await ref.read(profileControllerProvider.notifier).uploadProfileImage(
+          context, _profileImage!, ref.read(currentUserProvider)!.uid);
     } catch (errorMessage) {
       showSnackBar(context, errorMessage.toString());
     }
@@ -44,11 +44,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       if (image == null) {
         return;
       }
-      await ref.read(profileControllerProvider.notifier).uploadProfileImage(
-          context, _profileImage!, ref.read(currentUserProvider)!.uid);
       setState(() {
         _profileImage = File(image.path);
       });
+      await ref.read(profileControllerProvider.notifier).uploadProfileImage(
+          context, _profileImage!, ref.read(currentUserProvider)!.uid);
     } catch (errorMessage) {
       showSnackBar(context, errorMessage.toString());
     }
