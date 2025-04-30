@@ -14,3 +14,9 @@ Slice Quest is a Flutter application that turns your NYC pizza adventure into a 
   <img src = "https://github.com/user-attachments/assets/f7e562ac-eb9f-49cf-bf5e-269aec019650"width="200"/>
   <img src="https://github.com/user-attachments/assets/b0e5edee-2e7c-4845-8338-fb9355d0d44e" width="200"/>
 </p>
+
+## Demo
+
+[Click here to watch the demo](https://github.com/user-attachments/assets/c019f699-d94d-41a4-a1f9-21bdf03087df)
+
+
