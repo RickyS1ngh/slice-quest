@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:slice_quest/constants/constants.dart';
 import 'package:slice_quest/error_handle.dart';
 import 'package:slice_quest/providers/firebase_providers.dart';
 import 'package:slice_quest/models/user.dart';
@@ -37,7 +38,7 @@ class AuthRepository {
           email: email,
           username: username,
           uid: userCredential.user!.uid,
-          profileImage: 'pizza_user_avatar',
+          profileImage: Constants.defaultProfilePic,
           completedQuests: [],
           xp: 0,
           activeQuest: '',
@@ -87,7 +88,8 @@ class AuthRepository {
             email: userCredential.user!.email ?? '',
             username: userCredential.user!.displayName ?? '',
             uid: userCredential.user!.uid,
-            profileImage: userCredential.user!.photoURL ?? 'pizza_user_avatar',
+            profileImage:
+                userCredential.user!.photoURL ?? Constants.defaultProfilePic,
             completedQuests: [],
             xp: 0,
             activeQuest: '',
@@ -108,6 +110,9 @@ class AuthRepository {
   }
 
   void signInWithApple() {}
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
 
   Stream<UserModel> getUserData(String uid) {
     final user = _firestore

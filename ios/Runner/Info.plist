@@ -45,5 +45,30 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription </key>
+	<string>Allow Image to be selected</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Select Image</string>
+	<!-- Put me in the [my_project]/ios/Runner/Info.plist file -->
+<!-- Google Sign-in Section -->
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleTypeRole</key>
+    <string>Editor</string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>com.googleusercontent.apps.269336761231-nvf986cjgraik5lrvuj4f68tff7aoblq</string>
+    </array>
+  </dict>
+</array>
+
+<!-- End of the Google Sign-in Section -->
+	<key>GIDClientID</key>
+<!-- TODO Replace this value: -->
+<!-- Copied from GoogleService-Info.plist key CLIENT_ID -->
+<string>269336761231-nvf986cjgraik5lrvuj4f68tff7aoblq.apps.googleusercontent.com</string>
+
+
 </dict>
 </plist>

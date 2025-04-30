@@ -44,11 +44,13 @@
             android:value="2" />
 
         <!-- ✅ Google Maps API Key (HARDCODED FOR TESTING) -->
-    <meta-data
+  <meta-data
     android:name="com.google.android.geo.API_KEY"
     android:value="${GOOGLE_MAPS_API_KEY}" />
 
     </application>
+
+
 
     <!-- Optional: required by some plugins -->
     <queries>

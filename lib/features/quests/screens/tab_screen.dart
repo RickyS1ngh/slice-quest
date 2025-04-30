@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:slice_quest/features/auth/controller/auth_controller.dart';
 import 'package:slice_quest/features/quests/screens/all_quests_screen.dart';
 import 'package:slice_quest/features/quests/screens/completed_quests_screen.dart';
+import 'package:slice_quest/features/quests/widgets/main_drawer.dart';
 
 class TabScreen extends ConsumerStatefulWidget {
   const TabScreen({super.key});
@@ -15,8 +16,7 @@ class _TabScreenState extends ConsumerState<TabScreen> {
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
-    var profileImage =
-        ref.read(currentUserProvider)?.profileImage ?? 'pizza_user_avatar';
+    var profileImage = ref.watch(currentUserProvider)?.profileImage ?? '';
     return Scaffold(
         appBar: AppBar(
             leading: Image.asset('assets/images/pizza.png'),
@@ -27,10 +27,20 @@ class _TabScreenState extends ConsumerState<TabScreen> {
               ),
             ),
             actions: [
-              CircleAvatar(
-                  backgroundImage:
-                      Image.asset('assets/images/$profileImage.png').image)
+              Builder(builder: (context) {
+                return GestureDetector(
+                    onTap: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    child: profileImage == ''
+                        ? CircularProgressIndicator()
+                        : CircleAvatar(
+                            maxRadius: 20,
+                            backgroundImage:
+                                Image.network(profileImage).image));
+              }),
             ]),
+        endDrawer: MainDrawer(),
         bottomNavigationBar: BottomNavigationBar(
           items: [
             BottomNavigationBarItem(
